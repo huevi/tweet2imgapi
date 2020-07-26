@@ -12,7 +12,6 @@ try:
 except Exception:
     print('Driver Not Found')
 
-
 async def asyc_screenshot(file_name):
     file_path=os.path.abspath(f"./data/{file_name}.html")
     browser = await launch(headless=True,executablePath=EXEC_PATH)

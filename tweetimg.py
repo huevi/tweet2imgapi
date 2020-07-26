@@ -6,15 +6,16 @@ import numpy as np
 import requests
 import json
 
-# import uvloop
 
+try:
+    EXEC_PATH = os.environ.get('GOOGLE_CHROME_SHIM')
+except Exception:
+    print('Driver Not Found')
 
-# file_name="new_tweet.html"
-# file_path=os.path.dirname(os.path.realpath(file_name))+f"/{file_name}"
 
 async def asyc_screenshot(file_name):
     file_path=os.path.abspath(f"./data/{file_name}.html")
-    browser = await launch()
+    browser = await launch(headless=True,executablePath=EXEC_PATH)
     page = await browser.newPage()
     await page.setViewport({'width': 1920, 'height': 1080, 'deviceScaleFactor' :2})
     await page.goto(f"file:{file_path}",({ "waitUntil": 'networkidle0' }))
@@ -23,14 +24,6 @@ async def asyc_screenshot(file_name):
     await browser.close()
 
 
-def screenshot(file_name):
-    asyncio.get_event_loop().run_until_complete(asyc_screenshot(file_name))
-    # asyncio.run(asyc_screenshot(file_name)) 
-# uvloop.install()
-# asyncio.run(main())
-    # pass
-# call()
-
 def get_tweet(tweet_url,file_name):
     oemb_tweet_api="https://publish.twitter.com/oembed?url="
     tweet_post=oemb_tweet_api+tweet_url+"&theme=dark"
@@ -38,6 +31,7 @@ def get_tweet(tweet_url,file_name):
     html_string=json.loads(page.text)["html"]
     with open (f"./data/{file_name}.html","w") as file:
         file.write(html_string)
+ 
         
 def autocrop(file_name):
     img_path = f"./data/{file_name}.png"
